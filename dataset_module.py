@@ -28,7 +28,7 @@ def dict_retrieve(file:file)-> dict:
                 d[user_id].append(dict(zip(keys,values)))
             else:
                 d[user_id] = [dict(zip(keys,values))]
-        logging.info(f"dict - {d['21'][0]}")
+        logging.info(f"dict - {d['21'][0]} \n")
         return d
         
     except Exception as e:

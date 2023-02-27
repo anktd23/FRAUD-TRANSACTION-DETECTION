@@ -53,9 +53,9 @@ class dist:
                     break
             if trans1 and trans2:
                 distance = self.euclidean_distance(trans1, trans2)
-                logging.info(f"Euclidean distance between transaction {transaction_id1} and {transaction_id2} for user {user_id} is {distance:.2f}")
+                logging.info(f"Euclidean distance between transaction {transaction_id1} and {transaction_id2} for user {user_id} is {distance:.2f} \n")
             else:
-                logging.info("One or both of the transactions not found.")
+                logging.info("One or both of the transactions not found. \n")
         except Exception as e:
             raise ProjException(e,sys)
         
@@ -89,12 +89,12 @@ class dist:
                     break
             if trans1 and trans2:
                 distance = self.euclidean_distance(trans1, trans2)
-                logging.info(f"Euclidean distance between transaction {transaction_id1} of user {user_id_1} and {transaction_id2} of user {user_id_2} is {distance:.2f}")
+                logging.info(f"Euclidean distance between transaction {transaction_id1} of user {user_id_1} and {transaction_id2} of user {user_id_2} is {distance:.2f} \n")
             else:
-                logging.info("One or both of the transactions not found.")
+                logging.info("One or both of the transactions not found. \n")
         except Exception as e:
             raise ProjException(e,sys)
 
 distance = dist()
-#distance.euclidean_dist_same()
+distance.euclidean_dist_same()
 distance.euclidean_dist_diff()
