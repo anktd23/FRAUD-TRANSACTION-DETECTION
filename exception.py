@@ -1,3 +1,4 @@
+from logger import logging
 import sys,os
 
 def error_message_detail(error, error_detail: sys):
@@ -6,6 +7,7 @@ def error_message_detail(error, error_detail: sys):
     error_message = "Error occurred python script name [{0}] line number [{1}] error message [{2}]".format(
         file_name, exc_tb.tb_lineno, str(error)
     )
+    logging.info(f"{error_message}")
     return error_message
 
 
