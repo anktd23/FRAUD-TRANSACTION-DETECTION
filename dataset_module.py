@@ -7,15 +7,16 @@ file = 'Transaction.txt'
 def dict_retrieve(file:file)-> dict:
     """
     This function coverts text file to dict.
-    ****************************************
+    ===========================================================================
     input_params -> .txt file
     output-> dict
+    ===========================================================================
     """
     try:
-        logging.info(f"reading text file {file}")
+        logging.info(f"{'~'*15}Reading text file {'~'*15}")
         with open(file) as f:
             data = f.read().strip().split('\n')
-        logging.info(f"Rows : {data[0:2]}")
+        logging.info(f"Rows in {file} : {data[0:2]}")
         logging.info(f"converting text file to dict")
         keys = ['user_id','transaction_id','transaction_desc','transaction_amt','x_cord_trans','y_cord_trans','status']
         logging.info(f"assigning keynames {keys}")
