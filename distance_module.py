@@ -18,9 +18,10 @@ class dist:
         try:
             """
             This method calculated the euclidean distance between two points.
-            *****************************************************************
+            `===========================================================================================
             input_params -> pt1,pt2  with x,y co-ordinates :str
             outputs -> euclidean dist:float
+            ============================================================================================
             """
             x1 = float(trans1['x_cord_trans'])
             y1 = float(trans1['y_cord_trans'])
@@ -33,9 +34,10 @@ class dist:
     def euclidean_dist_same(self):
         """
         This method calculate the euclidean distance between two transaction for same user.
-        ***********************************************************************************
+        `================================================================================================
         input_params-> user_id,transaction_id1,transaction_id2:str
         output -> euclidean distance:float
+        =================================================================================================
         """
         try:
             user_id = input("Enter the user ID:")
@@ -60,9 +62,10 @@ class dist:
     def euclidean_dist_diff(self):
         """
         This method calculate the euclidean distance between two transaction for same user.
-        ***********************************************************************************
+        `=============================================================================================
         input_params-> user_id1,user_id2,transaction_id1,transaction_id2:str
         output -> euclidean distance:float
+        ==============================================================================================
         """
         try:
             user_id = input("Enter the first user id:")
