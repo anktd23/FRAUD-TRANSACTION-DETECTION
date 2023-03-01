@@ -2,6 +2,7 @@ import sys
 from dataset_module import dict_retrieve
 from logger import logging
 from exception import ProjException
+from utils import median
 class stats:
     """
     This class have various statistics methods.
@@ -141,14 +142,16 @@ class stats:
         ================================================================
         """ 
         try:
-            logging.info(f"{'~'*15}MEDIAN TRANSACTION OF SINGLE USER{'~'*15}")       
+            logging.info(f"{'~'*15}MEDIAN TRANSACTION OF SINGLE USER{'~'*15}")  
             lst1=[]
+            #if length is odd
             if len(self.lst) % 2 != 0:
-                index_pos = int((len(lst)+1)/2)
+                index_pos = int((len(self.lst)+1)/2)
                 lst1.append(index_pos-1)
-                median_trans_amt = [lst[i] for i in lst1]
+                median_trans_amt = [self.lst[i] for i in lst1]
                 logging.info(f"The median of transaction of user {self.user_id} is {median_trans_amt[0]} \n")
                 return median_trans_amt[0]
+            #if length is even
             else:
                 index_pos1 = int((len(self.lst)/2)-1)
                 index_pos2 = int(((len(self.lst)/2)+1)-1)
@@ -175,12 +178,14 @@ class stats:
         try:
             logging.info(f"{'~'*15}MEDIAN TRANSACTION OF ALL USERS{'~'*15}")  
             lst1=[]
+            #if length is odd
             if len(self.lst_all) % 2 != 0:
                 index_pos = int((len(self.lst_all)+1)/2)
                 lst1.append(index_pos-1)
                 median_trans_amt = [self.lst_all[i] for i in lst1]
                 logging.info(f"The median of transaction of all users is {median_trans_amt[0]}")
                 return median_trans_amt
+            #if length is even
             else:
                 index_pos1 = int((len(self.lst_all)/2)-1)
                 index_pos2 = int(((len(self.lst_all)/2)+1)-1)
@@ -204,124 +209,21 @@ class stats:
         ouput -> iqr:float
         """
         try:
-            logging.info(f"{'~'*15} IQR FOR SINGLE USER{'~'*15}")
-            lst1=[]
-            # finding median for odd length.
-            if len(self.lst) % 2 != 0:
-                idx_pos = int((len(self.lst)+1)/2)
-                lst1.append(idx_pos-1)
-                median_trans_amt = [self.lst[i] for i in lst1][0]
-                
-                #finding median of quartile 1 and 3 for odd length
-                lst_q1 = []
-                lst_q3 = []
-                lst_q1_idx = []
-                lst_q3_idx = []
-
-                for i in self.lst:
-                    if i <= median_trans_amt:
-                        lst_q1.append(i)
-                    else:
-                        lst_q3.append(i)
-                # finding median for odd length.
-                if len(lst_q1) % 2 != 0 and len(lst_q3) % 2 != 0:
-                    #finding median for q1
-                    idx_pos_q1 = int((len(lst_q1)+1)/2)
-                    lst_q1_idx.append(idx_pos_q1-1)
-                    median_q1 = [lst_q1[i] for i in lst_q1_idx][0]
-                    #finding median for q3        
-                    idx_pos_q3 = int((len(lst_q3)+1)/2)
-                    lst_q3_idx.append(idx_pos_q3-1)
-                    median_q3 = [lst_q3[i] for i in lst_q3_idx][0]
-
-                    iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {self.user_id} is {iqr}")
-                #finding median for even length
-                else:
-                    #finding median for q1
-                    idx_pos1 = int((len(lst_q1)/2)-1)
-                    idx_pos2 = int(((len(lst_q1)/2)+1)-1)
-                    lst_q1_idx.insert(0,idx_pos1)
-                    lst_q1_idx.insert(1,idx_pos2)
-                    idx_element = [lst_q1[i] for i in lst_q1_idx]
-                    sum_element = 0
-                    for i in idx_element:
-                        sum_element = sum_element + i
-                    median_q1 = round(sum_element/2,2)
-                    #finding median for q3
-                    idx_pos1 = int((len(lst_q3)/2)-1)
-                    idx_pos2 = int(((len(lst_q3)/2)+1)-1)
-                    lst_q3_idx.insert(0,idx_pos1)
-                    lst_q3_idx.insert(1,idx_pos2)
-                    idx_element = [lst_q3[i] for i in lst_q3_idx]
-                    sum_element = 0
-                    for i in idx_element:
-                        sum_element = sum_element + i
-                    median_q3 = round(sum_element/2,2)
-                    #calculating iqr
-                    iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {self.user_id} is {iqr}")
-            #finding median for even length
+            logging.info(f"{'~'*15} IQR OF TRANSACTION FOR SINGLE USER{'~'*15}")
+            n = len(self.lst)
+            lst_q1 = self.lst[:n//2]
+            lst_q2 = self.lst[n//2:]
+            #if length is even
+            if n % 2 == 0:
+                q1 = median(lst=lst_q1)
+                q3 = median(lst=lst_q2)
+            #if length is odd
             else:
-                idx_pos1 = int((len(self.lst)/2)-1)
-                idx_pos2 = int(((len(self.lst)/2)+1)-1)
-                lst1.insert(0,idx_pos1)
-                lst1.insert(1,idx_pos2)
-                idx_element = [self.lst[i] for i in lst1]
-                sum_element = 0
-                for i in idx_element:
-                    sum_element = sum_element + i
-                median_trans_amt = round(sum_element/2,2)
-                #finding median of quartile 1 and 3 for odd length
-                lst_q1 = []
-                lst_q3 = []
-                lst_q1_idx = []
-                lst_q3_idx = []
-
-                for i in self.lst:
-                    if i <= median_trans_amt:
-                        lst_q1.append(i)
-                    else:
-                        lst_q3.append(i)
-                # finding median for odd length.
-                if len(lst_q1) % 2 != 0 and len(lst_q3) % 2 != 0:
-                    #finding median for q1
-                    idx_pos_q1 = int((len(lst_q1)+1)/2)
-                    lst_q1_idx.append(idx_pos_q1-1)
-                    median_q1 = [lst_q1[i] for i in lst_q1_idx][0]
-                    #finding median for q3        
-                    idx_pos_q3 = int((len(lst_q3)+1)/2)
-                    lst_q3_idx.append(idx_pos_q3-1)
-                    median_q3 = [lst_q3[i] for i in lst_q3_idx][0]
-                    iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {self.user_id} is {iqr}")
-
-                #finding median for even length
-                else:
-                    #finding median for q1
-                    idx_pos1 = int((len(lst_q1)/2)-1)
-                    idx_pos2 = int(((len(lst_q1)/2)+1)-1)
-                    lst_q1_idx.insert(0,idx_pos1)
-                    lst_q1_idx.insert(1,idx_pos2)
-                    idx_element = [lst_q1[i] for i in lst_q1_idx]
-                    sum_element = 0
-                    for i in idx_element:
-                        sum_element = sum_element + i
-                    median_q1 = round(sum_element/2,2)
-                    #finding median for q3
-                    idx_pos1 = int((len(lst_q3)/2)-1)
-                    idx_pos2 = int(((len(lst_q3)/2)+1)-1)
-                    lst_q3_idx.insert(0,idx_pos1)
-                    lst_q3_idx.insert(1,idx_pos2)
-                    idx_element = [lst_q3[i] for i in lst_q3_idx]
-                    sum_element = 0
-                    for i in idx_element:
-                        sum_element = sum_element + i
-                    median_q3 = round(sum_element/2,2)
-                    #calculating iqr
-                    iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {self.user_id} is {iqr}")
-
+                q1 = median(lst_q1)
+                q3 = median(lst_q2)
+            iqr = round((float(q3) - float(q1)),2)
+            logging.info(f"The IQR of transaction for user {self.user_id} is {iqr} \n")
+            return iqr
         except Exception as e:
             raise ProjException(e,sys)
     
