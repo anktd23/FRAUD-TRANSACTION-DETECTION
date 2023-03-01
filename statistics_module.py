@@ -9,6 +9,22 @@ class stats:
     def __init__(self):
         try:
             self.data = dict_retrieve('Transaction.txt')
+            self.user_id = input('Enter the user_id :')
+            transaction = self.data.get(self.user_id)
+            #list of all transaction amount of single user
+            self.lst = []
+            for dic in transaction:
+                self.lst.append(float(dic['transaction_amt']))
+                self.lst.sort(reverse =False)
+                
+            #list of all transaction amount of all users  
+            self.lst_all = []
+            for values in self.data.values():
+                lst = []
+                for value in values:
+                    lst.append(float(value['transaction_amt']))
+                self.lst_all.extend(lst)
+                self.lst_all.sort(reverse =False)
         except Exception as e:
             raise ProjException(e,sys)
           
@@ -22,8 +38,7 @@ class stats:
         """
         try:
             logging.info(f"{'~'*15}AVERAGE TRANSACTION PER USER{'~'*15}")
-            user_id = input('Enter the user_id :')
-            transaction = self.data.get(user_id,[])
+            transaction = self.data.get(self.user_id,[])
             total_amt = 0
             count = 0
             for dic in transaction:
@@ -31,7 +46,7 @@ class stats:
                 total_amt = total_amt + dic['transaction_amt']
                 count+=1
                 avg_trans_amt = round(total_amt/count,2)
-            logging.info(f"The average transaction of user {user_id} is {avg_trans_amt} \n")
+            logging.info(f"The average transaction of user {self.user_id} is {avg_trans_amt} \n")
             return avg_trans_amt
         except Exception as e:
             raise ProjException(e,sys)
@@ -73,15 +88,8 @@ class stats:
         """ 
         try:
             logging.info(f"{'~'*15}MODE TRANSACTION OF SINGLE USER{'~'*15}")
-            user_id = input('Enter the user_id :')
-            transaction = self.data.get(user_id,[])
-            lst = []
-            for dic in transaction:
-                trans_amt  = float(dic['transaction_amt'])
-                lst.append(trans_amt)
-
             freq_dict = {}
-            for num in lst:
+            for num in self.lst:
                 if num in freq_dict:
                     freq_dict[num] += 1
                 else:
@@ -89,10 +97,10 @@ class stats:
             max_freq = max(freq_dict.values())
             mode_trans_amt = [key for key, value in freq_dict.items() if value == max_freq]
             if max_freq<2:
-                logging.info(f"No transaction amount is repeated for user {user_id} \n")
+                logging.info(f"No transaction amount is repeated for user {self.user_id} \n")
                 return None
             else:
-                logging.info(f"Transaction amount {mode_trans_amt[0]} repeated {max_freq} times for the user {user_id} \n")
+                logging.info(f"Transaction amount {mode_trans_amt[0]} repeated {max_freq} times for the user {self.user_id} \n")
                 return mode_trans_amt
         except Exception as e:
             raise ProjException(e,sys)
@@ -106,15 +114,8 @@ class stats:
         """ 
         try:
             logging.info(f"{'~'*15}MODE TRANSACTION OF ALL USER{'~'*15}")
-            lst_final = []
-            for values in self.data.values():
-                lst = []
-                for value in values:
-                    lst.append(float(value['transaction_amt']))
-                lst_final.extend(lst)
-            
             freq_dict = {}
-            for num in lst_final:
+            for num in self.lst_all:
                 if num in freq_dict:
                     freq_dict[num] += 1
                 else:
@@ -140,31 +141,25 @@ class stats:
         ================================================================
         """ 
         try:
-            logging.info(f"{'~'*15}MEDIAN TRANSACTION OF SINGLE USER{'~'*15}")
-            user_id = input('Enter the user_id :')           
-            transaction = self.data.get(user_id,[])
-            lst  =[]
-            for dic in transaction:
-                lst.append(float(dic['transaction_amt']))
-                lst.sort(reverse =False)
+            logging.info(f"{'~'*15}MEDIAN TRANSACTION OF SINGLE USER{'~'*15}")       
             lst1=[]
-            if len(lst) % 2 != 0:
+            if len(self.lst) % 2 != 0:
                 index_pos = int((len(lst)+1)/2)
                 lst1.append(index_pos-1)
                 median_trans_amt = [lst[i] for i in lst1]
-                logging.info(f"The median of transaction of user {user_id} is {median_trans_amt[0]} \n")
+                logging.info(f"The median of transaction of user {self.user_id} is {median_trans_amt[0]} \n")
                 return median_trans_amt[0]
             else:
-                index_pos1 = int((len(lst)/2)-1)
-                index_pos2 = int(((len(lst)/2)+1)-1)
+                index_pos1 = int((len(self.lst)/2)-1)
+                index_pos2 = int(((len(self.lst)/2)+1)-1)
                 lst1.insert(0,index_pos1)
                 lst1.insert(1,index_pos2)
-                idx_element = [lst[i] for i in lst1]
+                idx_element = [self.lst[i] for i in lst1]
                 sum_element = 0
                 for i in idx_element:
                     sum_element = sum_element + i
                 median_trans_amt = round(sum_element/2,2)
-                logging.info(f"The median of transaction of user {user_id} is {median_trans_amt} \n")
+                logging.info(f"The median of transaction of user {self.user_id} is {median_trans_amt} \n")
                 return median_trans_amt
         except Exception as e:
             raise ProjException(e,sys)
@@ -179,27 +174,19 @@ class stats:
         """ 
         try:
             logging.info(f"{'~'*15}MEDIAN TRANSACTION OF ALL USERS{'~'*15}")  
-            lst_final = []
-            for values in self.data.values():
-                lst = []
-                for val in values:
-                    val['transaction_amt'] = float(val['transaction_amt'])
-                    lst.append(val['transaction_amt'])
-                lst_final.extend(lst)
-            lst_final.sort(reverse =False)
             lst1=[]
-            if len(lst_final) % 2 != 0:
-                index_pos = int((len(lst_final)+1)/2)
+            if len(self.lst_all) % 2 != 0:
+                index_pos = int((len(self.lst_all)+1)/2)
                 lst1.append(index_pos-1)
-                median_trans_amt = [lst_final[i] for i in lst1]
+                median_trans_amt = [self.lst_all[i] for i in lst1]
                 logging.info(f"The median of transaction of all users is {median_trans_amt[0]}")
                 return median_trans_amt
             else:
-                index_pos1 = int((len(lst_final)/2)-1)
-                index_pos2 = int(((len(lst_final)/2)+1)-1)
+                index_pos1 = int((len(self.lst_all)/2)-1)
+                index_pos2 = int(((len(self.lst_all)/2)+1)-1)
                 lst1.insert(0,index_pos1)
                 lst1.insert(1,index_pos2)
-                idx_element = [lst_final[i] for i in lst1]
+                idx_element = [self.lst_all[i] for i in lst1]
                 sum_element = 0
                 for i in idx_element:
                     sum_element = sum_element + i
@@ -218,18 +205,12 @@ class stats:
         """
         try:
             logging.info(f"{'~'*15} IQR FOR SINGLE USER{'~'*15}")
-            user_id = input('Enter the user_id :')          
-            transaction = self.data.get(user_id)
-            lst  =[]
-            for dic in transaction:
-                lst.append(float(dic['transaction_amt']))
-                lst.sort(reverse =False)
             lst1=[]
             # finding median for odd length.
-            if len(lst) % 2 != 0:
-                idx_pos = int((len(lst)+1)/2)
+            if len(self.lst) % 2 != 0:
+                idx_pos = int((len(self.lst)+1)/2)
                 lst1.append(idx_pos-1)
-                median_trans_amt = [lst[i] for i in lst1][0]
+                median_trans_amt = [self.lst[i] for i in lst1][0]
                 
                 #finding median of quartile 1 and 3 for odd length
                 lst_q1 = []
@@ -237,7 +218,7 @@ class stats:
                 lst_q1_idx = []
                 lst_q3_idx = []
 
-                for i in lst:
+                for i in self.lst:
                     if i <= median_trans_amt:
                         lst_q1.append(i)
                     else:
@@ -254,7 +235,7 @@ class stats:
                     median_q3 = [lst_q3[i] for i in lst_q3_idx][0]
 
                     iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {user_id} is {iqr}")
+                    logging.info(f"IQR for user {self.user_id} is {iqr}")
                 #finding median for even length
                 else:
                     #finding median for q1
@@ -279,14 +260,14 @@ class stats:
                     median_q3 = round(sum_element/2,2)
                     #calculating iqr
                     iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {user_id} is {iqr}")
+                    logging.info(f"IQR for user {self.user_id} is {iqr}")
             #finding median for even length
             else:
-                idx_pos1 = int((len(lst)/2)-1)
-                idx_pos2 = int(((len(lst)/2)+1)-1)
+                idx_pos1 = int((len(self.lst)/2)-1)
+                idx_pos2 = int(((len(self.lst)/2)+1)-1)
                 lst1.insert(0,idx_pos1)
                 lst1.insert(1,idx_pos2)
-                idx_element = [lst[i] for i in lst1]
+                idx_element = [self.lst[i] for i in lst1]
                 sum_element = 0
                 for i in idx_element:
                     sum_element = sum_element + i
@@ -297,7 +278,7 @@ class stats:
                 lst_q1_idx = []
                 lst_q3_idx = []
 
-                for i in lst:
+                for i in self.lst:
                     if i <= median_trans_amt:
                         lst_q1.append(i)
                     else:
@@ -313,7 +294,7 @@ class stats:
                     lst_q3_idx.append(idx_pos_q3-1)
                     median_q3 = [lst_q3[i] for i in lst_q3_idx][0]
                     iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {user_id} is {iqr}")
+                    logging.info(f"IQR for user {self.user_id} is {iqr}")
 
                 #finding median for even length
                 else:
@@ -339,7 +320,7 @@ class stats:
                     median_q3 = round(sum_element/2,2)
                     #calculating iqr
                     iqr = median_q3 - median_q1
-                    logging.info(f"IQR for user {user_id} is {iqr}")
+                    logging.info(f"IQR for user {self.user_id} is {iqr}")
 
         except Exception as e:
             raise ProjException(e,sys)
