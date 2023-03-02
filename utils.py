@@ -46,4 +46,27 @@ def mean(lst):
         return mean_val
     except Exception as e:
         raise ProjException(e,sys)
-        
+
+def dict_retrieve_(file):
+        """
+    This method coverts .txt file to dict where key is transaction_id
+    `========================================================================
+    input_params -> .txt file
+    output-> dict where key is transaction_id
+    =========================================================================
+    """
+        try:
+            with open(file) as f:
+                data = f.read().strip().split('\n')
+            keys = ['user_id','transaction_id','transaction_desc','transaction_amt','x_cord_trans','y_cord_trans','status']
+            d = {}
+            for row in data:
+                values = row.split(":")
+                transaction_id = values[1]
+                if transaction_id in d:
+                    d[transaction_id].append(dict(zip(keys,values)))
+                else:
+                    d[transaction_id] = [dict(zip(keys,values))]
+            return d
+        except Exception as e:
+            raise ProjException(e,sys)
