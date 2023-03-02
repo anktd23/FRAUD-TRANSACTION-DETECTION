@@ -2,7 +2,8 @@ import sys
 from dataset_module import dict_retrieve
 from logger import logging
 from exception import ProjException
-from utils import median
+from utils import median,mean
+
 class stats:
     """
     This class have various statistics methods.
@@ -81,7 +82,7 @@ class stats:
         
     def mode_trans(self):
         """
-        This method returns average of transactions from all users.
+        This method returns mode of transactions from all users.
         `=============================================================
         input_params -> data:dict, user_id:str
         output-> mode transaction of single user:float
@@ -107,7 +108,7 @@ class stats:
             raise ProjException(e,sys)
     def mode_trans_all(self) :
         """
-        This method returns average of transactions from all users.
+        This method returns mode of transactions from all users.
         `================================================================
         input_params -> data:dict
         output-> mode transaction of all users:float
@@ -138,7 +139,7 @@ class stats:
         This method returns median of transactions from single user.
         `================================================================
         input_params -> data:dict, user_id:str
-        output-> mode transaction of single user:float
+        output-> median transaction of single user:float
         ================================================================
         """ 
         try:
@@ -207,6 +208,7 @@ class stats:
         `====================================================================================
         input_params -> data:dict, user_id=str
         ouput -> iqr:float
+        =====================================================================================
         """
         try:
             logging.info(f"{'~'*15} IQR OF TRANSACTIONS FOR SINGLE USER{'~'*15}")
@@ -233,6 +235,7 @@ class stats:
         `====================================================================================
         input_params -> data:dict
         ouput -> iqr:float
+        =====================================================================================
         """
         try:
             logging.info(f"{'~'*15} IQR OF TRANSACTIONS FOR ALL USERS{'~'*15}")
@@ -259,9 +262,10 @@ class stats:
         `====================================================================================
         input_params -> data:dict, user id:str
         ouput -> centroid:float
+        =====================================================================================
         """
         try:
-            logging.info(f"{'~'*15} LOACTION CENTROID FOR ANY USER{'~'*15}")
+            logging.info(f"{'~'*15} LOCATION CENTROID FOR ANY USER{'~'*15}")
  
             locations = self.data.get(self.user_id)
             x_sum = 0
@@ -278,6 +282,26 @@ class stats:
         except Exception as e:
             raise ProjException(e,sys)
         
+    def std_dev(self):
+        """
+        This method returns standard deviation of transaction for any user
+        `=================================================================================
+        input_params -> data:dict , uer_id:str
+        output -> standard deviation:float 
+        ===================================================================================
+        """
+        try:
+            logging.info(f"{'~'*15} STANDARD DEVIATION OF TRANSACTION FOR ANY USER{'~'*15}")
+            sum_num = 0
+            for tran in self.lst:
+                sum_num = sum_num + ((tran - mean(self.lst))**2)
+            std_dev = round((sum_num/len(self.lst))**0.5, 2)
+            logging.info(f"The standard deviation for user {self.user_id} is {std_dev}\n")
+            return std_dev
+        except Exception as e:
+            raise ProjException(e,sys)
+
+        
 stat = stats()
 stat.avg_trans()
 stat.avg_trans_all()
@@ -288,3 +312,4 @@ stat.median_trans_all()
 stat.iqr_trans()
 stat.iqr_trans_all()
 stat.centroid()
+stat.std_dev()
