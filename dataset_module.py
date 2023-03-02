@@ -9,7 +9,7 @@ def dict_retrieve(file:file)-> dict:
     This function coverts text file to dict.
     ===========================================================================
     input_params -> .txt file
-    output-> dict
+    output-> dict where key is user_id
     ===========================================================================
     """
     try:
