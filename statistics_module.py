@@ -2,7 +2,8 @@ import sys
 from dataset_module import dict_retrieve
 from logger import logging
 from exception import ProjException
-from utils import median,mean
+from utils import median,mean,dict_retrieve_
+file = 'Transaction.txt'
 
 class stats:
     """
@@ -300,6 +301,29 @@ class stats:
             return std_dev
         except Exception as e:
             raise ProjException(e,sys)
+        
+    def fraudulent_trans(file):
+        """
+        This method returns status of transaction. And if transaction is fraudulent 
+        it returns transaction details.
+        `=================================================================================
+        input_params -> data:dict , transaction_id:str
+        output -> status:str, transaction deatils:dict
+        ===================================================================================
+        """
+        try:
+            logging.info(f"{'~'*15} FRAUDULENT TRANSACTION DETECTION{'~'*15}")
+            data = dict_retrieve_('Transaction.txt')
+            transaction_id = input('Enter the transaction_id :')
+            trans = data.get(transaction_id)
+            for tran in trans:
+                if tran['transaction_id'] == transaction_id:
+                    if tran['status'] == 'true':
+                        logging.info(f"The transaction {transaction_id} is fraud and details are {tran}")
+                    else:
+                        logging.info(f"The transaction {transaction_id} is not fraud.")
+        except Exception as e:
+            raise ProjException(e,sys)
 
         
 stat = stats()
@@ -313,3 +337,4 @@ stat.iqr_trans()
 stat.iqr_trans_all()
 stat.centroid()
 stat.std_dev()
+stat.fraudulent_trans()
