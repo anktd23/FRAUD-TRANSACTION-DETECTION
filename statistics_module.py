@@ -252,6 +252,32 @@ class stats:
             return iqr
         except Exception as e:
             raise ProjException(e,sys)
+        
+    def centroid(self):
+        """
+        This method returns centroid for any user.
+        `====================================================================================
+        input_params -> data:dict, user id:str
+        ouput -> centroid:float
+        """
+        try:
+            logging.info(f"{'~'*15} LOACTION CENTROID FOR ANY USER{'~'*15}")
+ 
+            locations = self.data.get(self.user_id)
+            x_sum = 0
+            y_sum = 0
+            count = 0
+            for loc in locations:
+                    x_sum += float(loc['x_cord_trans'])
+                    y_sum += float(loc['y_cord_trans'])
+                    count += 1
+            centroid_x = round((x_sum / count),2)
+            centroid_y = round((y_sum / count),2)
+            logging.info(f"The location centroid for user {self.user_id} is {centroid_x,centroid_y} \n")
+            return (centroid_x, centroid_y)
+        except Exception as e:
+            raise ProjException(e,sys)
+        
 stat = stats()
 stat.avg_trans()
 stat.avg_trans_all()
@@ -261,3 +287,4 @@ stat.median_trans()
 stat.median_trans_all()
 stat.iqr_trans()
 stat.iqr_trans_all()
+stat.centroid()
