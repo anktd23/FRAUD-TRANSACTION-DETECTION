@@ -5,8 +5,8 @@ def median(lst:list):
     """
     This method returns median of transactions from single user.
     `================================================================
-    input_params -> data:dict, user_id:str
-    output-> mode transaction of single user:float
+    input_params -> lst:list
+    output-> median:float
     ================================================================
     """ 
     try:
@@ -30,6 +30,20 @@ def median(lst:list):
                 sum_element = sum_element + i
             median_trans_amt = round(sum_element/2,2)
             return median_trans_amt
+    except Exception as e:
+        raise ProjException(e,sys)
+    
+def mean(lst):
+    """
+    This method returns mean of transactions.`
+    `===============================================================
+    input_params -> lst:list
+    output-> mean:float
+    ===============================================================
+    """
+    try:
+        mean_val =sum(lst)/len(lst)
+        return mean_val
     except Exception as e:
         raise ProjException(e,sys)
         
