@@ -70,3 +70,20 @@ def dict_retrieve_(file):
             return d
         except Exception as e:
             raise ProjException(e,sys)
+        
+def standard_dev(lst):
+        """
+    This method returns standard deviation.
+    `=================================================================================
+    input_params -> data:lst , user_id:str
+    output -> standard deviation:float 
+    ===================================================================================
+    """
+        try:
+            sum_num = 0
+            for tran in lst:
+                sum_num = sum_num + ((tran - mean(lst))**2)
+            std_dev = round((sum_num/len(lst))**0.5, 2)
+            return std_dev
+        except Exception as e:
+            raise ProjException(e,sys)
