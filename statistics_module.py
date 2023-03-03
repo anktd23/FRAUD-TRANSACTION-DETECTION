@@ -340,9 +340,54 @@ class stats:
                     abnormal_tran.append(tran)
                 else:
                     pass
-            logging.info(f"Abnormal transaction details fro user {self.user_id} are {abnormal_tran}")
+            logging.info(f"Abnormal transaction details for user {self.user_id} are {abnormal_tran}")
         except Exception as e:
             raise ProjException(e.sys)
+        
+    def zscore(self):
+        """
+        This method returns Z score of transaction for single user.
+        `=================================================================================
+        input_params -> data:dict , user_id:str
+        output -> Z-Score:dict
+        ===================================================================================
+
+        """
+        try:
+            logging.info(f"{'~'*15}Z SCORE CALCULATION FOR SINGLE USER{'~'*15}")
+            d ={}
+            for tran in self.transaction:
+                z_score = round((float(tran['transaction_amt'])- mean(self.lst)) / standard_dev(self.lst),2)
+                d.update({tran['transaction_id']:z_score})
+            logging.info(f"Z score for user {self.user_id} is {d}")
+            return z_score
+        except Exception as e:
+            raise ProjException(e,sys)
+
+    def zscore_all(self):
+        """
+        This method returns Z score of transactions for all users.
+        `=================================================================================
+        input_params -> data:dict 
+        output ->  Z-Score:dict
+        ===================================================================================
+
+        """
+        try:
+            logging.info(f"{'~'*15}Z SCORE CALCULATION FOR ALL USERS{'~'*15}")
+            user_id_lst = [key for key in self.data.keys()]
+            d ={}
+            for user in user_id_lst:
+                for tran in self.data.get(user):
+                        z_score = round((float(tran['transaction_amt'])- mean(self.lst_all)) / standard_dev(self.lst_all),2)
+                        d.update({tran['transaction_id']:z_score})
+            logging.info(f"Z score for all users  are {d}")
+            return z_score
+        except Exception as e:
+            raise ProjException(e,sys)
+
+
+
         
 stat = stats()
 stat.avg_trans()
@@ -357,3 +402,5 @@ stat.centroid()
 stat.std_dev()
 stat.fraudulent_trans()
 stat.abnormal_trans()
+stat.zscore()
+stat.zscore_all()
