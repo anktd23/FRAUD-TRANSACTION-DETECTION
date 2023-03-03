@@ -2,7 +2,7 @@ import sys
 from dataset_module import dict_retrieve
 from logger import logging
 from exception import ProjException
-from utils import median,mean,dict_retrieve_
+from utils import median,mean,dict_retrieve_,standard_dev
 file = 'Transaction.txt'
 
 class stats:
@@ -13,10 +13,10 @@ class stats:
         try:
             self.data = dict_retrieve('Transaction.txt')
             self.user_id = input('Enter the user_id :')
-            transaction = self.data.get(self.user_id)
+            self.transaction = self.data.get(self.user_id)
             #list of all transaction amount of single user
             self.lst = []
-            for dic in transaction:
+            for dic in self.transaction:
                 self.lst.append(float(dic['transaction_amt']))
                 self.lst.sort(reverse =False)
                 
@@ -287,7 +287,7 @@ class stats:
         """
         This method returns standard deviation of transaction for any user
         `=================================================================================
-        input_params -> data:dict , uer_id:str
+        input_params -> data:lst , user_id:str
         output -> standard deviation:float 
         ===================================================================================
         """
@@ -324,7 +324,25 @@ class stats:
                         logging.info(f"The transaction {transaction_id} is not fraud.")
         except Exception as e:
             raise ProjException(e,sys)
-
+    def abnormal_trans(self):
+        """
+        This method returns abnormal transaction.
+        `=================================================================================
+        input_params -> data:dict , user_id:str
+        output -> transaction deatils:dict
+        ===================================================================================
+        """
+        try:
+            logging.info(f"{'~'*15} ABNORMAL TRANSACTION DETECTION{'~'*15}")
+            abnormal_tran = []
+            for tran in self.transaction:
+                if abs(float(tran['transaction_amt'])- mean(self.lst)) > 2*standard_dev(self.lst):
+                    abnormal_tran.append(tran)
+                else:
+                    pass
+            logging.info(f"Abnormal transaction details fro user {self.user_id} are {abnormal_tran}")
+        except Exception as e:
+            raise ProjException(e.sys)
         
 stat = stats()
 stat.avg_trans()
@@ -338,3 +356,4 @@ stat.iqr_trans_all()
 stat.centroid()
 stat.std_dev()
 stat.fraudulent_trans()
+stat.abnormal_trans()
