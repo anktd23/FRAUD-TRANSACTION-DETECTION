@@ -2,7 +2,7 @@ import sys
 from dataset_module import dict_retrieve
 from logger import logging
 from exception import ProjException
-from utils import median,mean,dict_retrieve_,standard_dev
+from utils import median,mean,dict_retrieve_,standard_dev,iqr
 file = 'Transaction.txt'
 
 class stats:
@@ -418,7 +418,38 @@ class stats:
                 logging.info(f"Enter correct location co-ordinates.")
         except Exception as e:
             raise ProjException(e,sys)
+    
+    def outlier_det(self):
+        """
+        This method returns outliers at any location for any user.
+        `=================================================================================
+        input_params -> data:dict, location:tuple
+        output ->  frequency of transaction:float
+        ===================================================================================
 
+        """
+        try:
+            logging.info(f"{'~'*15}OUTLIER FOR ANY LOCATION AND ANY USER {'~'*15}")
+            q1,q3,iqr_val= iqr(self.lst)
+            lower_limit =q1-(1.5*iqr_val) 
+            upper_limit =q3+(1.5*iqr_val)
+            outlier = []
+            for i in self.lst:
+                if i>upper_limit or i < lower_limit:
+                    outlier.append(i)
+            logging.info(f"The outliers for location and user {self.user_id} are {outlier}")
+            x_cord_trans = float(input("Enter x_cord_trans: "))
+            y_cord_trans = float(input("Enter y_cord_trans: "))
+            transactions = self.data.get(self.user_id)
+            for trans in transactions:
+                if float(trans['x_cord_trans']) == x_cord_trans and float(trans['y_cord_trans']) == y_cord_trans:
+                    if float(trans['transaction_amt']) in outlier:
+                        logging.info(f"For user {self.user_id} and location {x_cord_trans,y_cord_trans} the transaction_amt {(float(trans['transaction_amt']))} is outlier")
+                    else:
+                        logging.info(f"For user {self.user_id} and location {x_cord_trans,y_cord_trans} the transaction_amt {(float(trans['transaction_amt']))} is not outlier")
+        
+        except Exception as e:
+            raise Exception
 
 
         
@@ -438,3 +469,4 @@ stat.abnormal_trans()
 stat.zscore()
 stat.zscore_all()
 stat.freq_tran_loc()
+stat.outlier_det()
