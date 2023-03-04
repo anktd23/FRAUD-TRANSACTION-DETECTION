@@ -385,6 +385,39 @@ class stats:
             return z_score
         except Exception as e:
             raise ProjException(e,sys)
+        
+    def freq_tran_loc(self):
+        """
+        This method frequency of transaction at any location.
+        `=================================================================================
+        input_params -> data:dict, location:tuple
+        output ->  frequency of transaction:float
+        ===================================================================================
+
+        """
+        try:
+            logging.info(f"{'~'*15}FREQUENCY OF TRANSACTION AT ANY LOCATION{'~'*15}")
+            user_id_lst = [key for key in self.data.keys()]
+            dict_cord ={}
+            for i in user_id_lst:
+                for user in self.data.get(i):
+                        x, y = user['x_cord_trans'], user['y_cord_trans']
+                        key = (x, y)
+                        if key not in dict_cord:
+                            dict_cord[key] = 1
+                        else:
+                            dict_cord[key] += 1
+            x_cord = input("Enter x_cord ")
+            y_cord = input("Enter y_cord ")
+            x_y_cord = (x_cord,y_cord)
+            if x_y_cord in dict_cord:
+                freq_tran = dict_cord.get(x_y_cord)
+                logging.info(f"The frequency of transaction at location{x_y_cord} is {freq_tran}.")
+                return freq_tran
+            else:
+                logging.info(f"Enter correct location co-ordinates.")
+        except Exception as e:
+            raise ProjException(e,sys)
 
 
 
@@ -404,3 +437,4 @@ stat.fraudulent_trans()
 stat.abnormal_trans()
 stat.zscore()
 stat.zscore_all()
+stat.freq_tran_loc()
