@@ -87,3 +87,28 @@ def standard_dev(lst):
             return std_dev
         except Exception as e:
             raise ProjException(e,sys)
+        
+def iqr(lst):
+        """
+        This method returns IQR 
+        `====================================================================================
+        input_params -> data:lst
+        ouput -> iqr:float
+        =====================================================================================
+        """
+        try:
+            n = len(lst)
+            lst_q1 = lst[:n//2]
+            lst_q2 = lst[n//2:]
+            #if length is even
+            if n % 2 == 0:
+                q1 = median(lst=lst_q1)
+                q3 = median(lst=lst_q2)
+            #if length is odd
+            else:
+                q1 = median(lst_q1)
+                q3 = median(lst_q2)
+            iqr_val = round((float(q3) - float(q1)),2)
+            return q1,q3,iqr_val
+        except Exception as e:
+            raise ProjException(e,sys)
