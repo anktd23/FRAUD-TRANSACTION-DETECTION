@@ -5,7 +5,7 @@ from exception import ProjException
 from utils import median,mean,dict_retrieve_,standard_dev,iqr
 file = 'Transaction.txt'
 
-class stats:
+class Stat:
     """
     This class have various statistics methods.
     """
@@ -15,19 +15,19 @@ class stats:
             self.user_id = input('Enter the user_id :')
             self.transaction = self.data.get(self.user_id)
             #list of all transaction amount of single user
-            self.lst = []
-            for dic in self.transaction:
-                self.lst.append(float(dic['transaction_amt']))
-                self.lst.sort(reverse =False)
+            self.tran_amt = []
+            for tran in self.transaction:
+                self.tran_amt.append(float(tran['transaction_amt']))
+                self.tran_amt.sort(reverse =False)
                 
             #list of all transaction amount of all users  
-            self.lst_all = []
+            self.tran_amt_all = []
             for values in self.data.values():
                 lst = []
                 for value in values:
                     lst.append(float(value['transaction_amt']))
-                self.lst_all.extend(lst)
-                self.lst_all.sort(reverse =False)
+                self.tran_amt_all.extend(lst)
+                self.tran_amt_all.sort(reverse =False)
         except Exception as e:
             raise ProjException(e,sys)
           
@@ -92,7 +92,7 @@ class stats:
         try:
             logging.info(f"{'~'*15}MODE TRANSACTION OF SINGLE USER{'~'*15}")
             freq_dict = {}
-            for num in self.lst:
+            for num in self.tran_amt:
                 if num in freq_dict:
                     freq_dict[num] += 1
                 else:
@@ -118,7 +118,7 @@ class stats:
         try:
             logging.info(f"{'~'*15}MODE TRANSACTIONS OF ALL USER{'~'*15}")
             freq_dict = {}
-            for num in self.lst_all:
+            for num in self.tran_amt_all:
                 if num in freq_dict:
                     freq_dict[num] += 1
                 else:
@@ -147,19 +147,19 @@ class stats:
             logging.info(f"{'~'*15}MEDIAN TRANSACTIONS OF SINGLE USER{'~'*15}")  
             lst1=[]
             #if length is odd
-            if len(self.lst) % 2 != 0:
-                index_pos = int((len(self.lst)+1)/2)
+            if len(self.tran_amt) % 2 != 0:
+                index_pos = int((len(self.tran_amt)+1)/2)
                 lst1.append(index_pos-1)
-                median_trans_amt = [self.lst[i] for i in lst1]
+                median_trans_amt = [self.tran_amt[i] for i in lst1]
                 logging.info(f"The median of transactions of user {self.user_id} is {median_trans_amt[0]} \n")
                 return median_trans_amt[0]
             #if length is even
             else:
-                index_pos1 = int((len(self.lst)/2)-1)
-                index_pos2 = int(((len(self.lst)/2)+1)-1)
+                index_pos1 = int((len(self.tran_amt)/2)-1)
+                index_pos2 = int(((len(self.tran_amt)/2)+1)-1)
                 lst1.insert(0,index_pos1)
                 lst1.insert(1,index_pos2)
-                idx_element = [self.lst[i] for i in lst1]
+                idx_element = [self.tran_amt[i] for i in lst1]
                 sum_element = 0
                 for i in idx_element:
                     sum_element = sum_element + i
@@ -181,19 +181,19 @@ class stats:
             logging.info(f"{'~'*15}MEDIAN TRANSACTIONS OF ALL USERS{'~'*15}")  
             lst1=[]
             #if length is odd
-            if len(self.lst_all) % 2 != 0:
-                index_pos = int((len(self.lst_all)+1)/2)
+            if len(self.tran_amt_all) % 2 != 0:
+                index_pos = int((len(self.tran_amt_all)+1)/2)
                 lst1.append(index_pos-1)
-                median_trans_amt = [self.lst_all[i] for i in lst1]
+                median_trans_amt = [self.tran_amt_all[i] for i in lst1]
                 logging.info(f"The median of transactions of all users is {median_trans_amt[0]}")
                 return median_trans_amt
             #if length is even
             else:
-                index_pos1 = int((len(self.lst_all)/2)-1)
-                index_pos2 = int(((len(self.lst_all)/2)+1)-1)
+                index_pos1 = int((len(self.tran_amt_all)/2)-1)
+                index_pos2 = int(((len(self.tran_amt_all)/2)+1)-1)
                 lst1.insert(0,index_pos1)
                 lst1.insert(1,index_pos2)
-                idx_element = [self.lst_all[i] for i in lst1]
+                idx_element = [self.tran_amt_all[i] for i in lst1]
                 sum_element = 0
                 for i in idx_element:
                     sum_element = sum_element + i
@@ -213,9 +213,9 @@ class stats:
         """
         try:
             logging.info(f"{'~'*15} IQR OF TRANSACTIONS FOR SINGLE USER{'~'*15}")
-            n = len(self.lst)
-            lst_q1 = self.lst[:n//2]
-            lst_q2 = self.lst[n//2:]
+            n = len(self.tran_amt)
+            lst_q1 = self.tran_amt[:n//2]
+            lst_q2 = self.tran_amt[n//2:]
             #if length is even
             if n % 2 == 0:
                 q1 = median(lst=lst_q1)
@@ -240,9 +240,9 @@ class stats:
         """
         try:
             logging.info(f"{'~'*15} IQR OF TRANSACTIONS FOR ALL USERS{'~'*15}")
-            n = len(self.lst_all)
-            lst_q1 = self.lst_all[:n//2]
-            lst_q2 = self.lst_all[n//2:]
+            n = len(self.tran_amt_all)
+            lst_q1 = self.tran_amt_all[:n//2]
+            lst_q2 = self.tran_amt_all[n//2:]
             #if length is even
             if n % 2 == 0:
                 q1 = median(lst=lst_q1)
@@ -294,9 +294,9 @@ class stats:
         try:
             logging.info(f"{'~'*15} STANDARD DEVIATION OF TRANSACTION FOR ANY USER{'~'*15}")
             sum_num = 0
-            for tran in self.lst:
-                sum_num = sum_num + ((tran - mean(self.lst))**2)
-            std_dev = round((sum_num/len(self.lst))**0.5, 2)
+            for tran in self.tran_amt:
+                sum_num = sum_num + ((tran - mean(self.tran_amt))**2)
+            std_dev = round((sum_num/len(self.tran_amt))**0.5, 2)
             logging.info(f"The standard deviation for user {self.user_id} is {std_dev}\n")
             return std_dev
         except Exception as e:
@@ -336,7 +336,7 @@ class stats:
             logging.info(f"{'~'*15} ABNORMAL TRANSACTION DETECTION{'~'*15}")
             abnormal_tran = []
             for tran in self.transaction:
-                if abs(float(tran['transaction_amt'])- mean(self.lst)) > 2*standard_dev(self.lst):
+                if abs(float(tran['transaction_amt'])- mean(self.tran_amt)) > 2*standard_dev(self.tran_amt):
                     abnormal_tran.append(tran)
                 else:
                     pass
@@ -357,7 +357,7 @@ class stats:
             logging.info(f"{'~'*15}Z SCORE CALCULATION FOR SINGLE USER{'~'*15}")
             d ={}
             for tran in self.transaction:
-                z_score = round((float(tran['transaction_amt'])- mean(self.lst)) / standard_dev(self.lst),2)
+                z_score = round((float(tran['transaction_amt'])- mean(self.tran_amt)) / standard_dev(self.tran_amt),2)
                 d.update({tran['transaction_id']:z_score})
             logging.info(f"Z score for user {self.user_id} is {d}")
             return z_score
@@ -379,7 +379,7 @@ class stats:
             d ={}
             for user in user_id_lst:
                 for tran in self.data.get(user):
-                        z_score = round((float(tran['transaction_amt'])- mean(self.lst_all)) / standard_dev(self.lst_all),2)
+                        z_score = round((float(tran['transaction_amt'])- mean(self.tran_amt_all)) / standard_dev(self.tran_amt_all),2)
                         d.update({tran['transaction_id']:z_score})
             logging.info(f"Z score for all users  are {d}")
             return z_score
@@ -426,15 +426,15 @@ class stats:
         input_params -> data:dict, location:tuple
         output ->  frequency of transaction:float
         ===================================================================================
-
+        
         """
         try:
             logging.info(f"{'~'*15}OUTLIER FOR ANY LOCATION AND ANY USER {'~'*15}")
-            q1,q3,iqr_val= iqr(self.lst)
+            q1,q3,iqr_val= iqr(self.tran_amt)
             lower_limit =q1-(1.5*iqr_val) 
             upper_limit =q3+(1.5*iqr_val)
             outlier = []
-            for i in self.lst:
+            for i in self.tran_amt:
                 if i>upper_limit or i < lower_limit:
                     outlier.append(i)
             logging.info(f"The outliers for location and user {self.user_id} are {outlier}")
@@ -449,11 +449,47 @@ class stats:
                         logging.info(f"For user {self.user_id} and location {x_cord_trans,y_cord_trans} the transaction_amt {(float(trans['transaction_amt']))} is not outlier")
         
         except Exception as e:
-            raise Exception
-
-
+            raise ProjException(e,sys)
         
-stat = stats()
+    def nth_percentile(self):
+        """
+        This method returns percentile for any user.
+        `=================================================================================
+        input_params -> data:dict, user_id = str, percentile:str
+        output ->  nth percentile:float
+        ===================================================================================
+        """
+        try:
+            logging.info(f"{'~'*15}Nth PERCENTILE FOR ANY USER {'~'*15}")
+            percentile = input('Enter the percentile: ')
+            ordinal_rank = (int(percentile)*len(self.tran_amt))/100
+            idx = int(ordinal_rank-1)
+            nth_percentile = self.tran_amt[idx]
+            logging.info(f"{percentile}th percentile for user {self.user_id} is {nth_percentile}")
+            return nth_percentile
+        except Exception as e:
+            raise ProjException(e,sys)
+        
+    def nth_percentile_all(self):
+        """
+        This method returns percentile for all user.
+        `=================================================================================
+        input_params -> data:dict,percentile:str
+        output ->  nth percentile:float
+        ===================================================================================
+        """
+        try:
+            logging.info(f"{'~'*15}Nth PERCENTILE FOR ALL USERS {'~'*15}")
+            percentile = input('Enter the percentile: ')
+            ordinal_rank = (int(percentile)*len(self.tran_amt_all))/100
+            idx = int(ordinal_rank-1)
+            nth_percentile = self.tran_amt_all[idx]
+            logging.info(f"{percentile}th percentile for all users is {nth_percentile}")
+            return nth_percentile
+        except Exception as e:
+            raise ProjException(e,sys)
+        
+stat = Stat()
 stat.avg_trans()
 stat.avg_trans_all()
 stat.mode_trans()
@@ -470,3 +506,5 @@ stat.zscore()
 stat.zscore_all()
 stat.freq_tran_loc()
 stat.outlier_det()
+stat.nth_percentile()
+stat.nth_percentile_all()
