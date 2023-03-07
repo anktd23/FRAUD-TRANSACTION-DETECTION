@@ -8,11 +8,11 @@ class dist:
     """
     This class consist of methods to retrieve data and calculate euclidean distance.
     """
-    try:
-        def __init__(self):
-            self.data = dict_retrieve('transaction.txt')
-    except Exception as e:
-        raise ProjException(e,sys)
+    def __init__(self):
+            try:
+                self.data = dict_retrieve('transaction.txt')
+            except Exception as e:
+                raise ProjException(e,sys)
     
     def euclidean_distance(self, trans1, trans2)->float:
         try:
@@ -61,7 +61,7 @@ class dist:
         
     def euclidean_dist_diff(self):
         """
-        This method calculate the euclidean distance between two transaction for same user.
+        This method calculate the euclidean distance between two transaction for diff user.
         `=============================================================================================
         input_params-> user_id1,user_id2,transaction_id1,transaction_id2:str
         output -> euclidean distance:float
