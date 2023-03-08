@@ -1,4 +1,3 @@
-
 from statistics_module import Stat
 if __name__=="__main__":
      try:
