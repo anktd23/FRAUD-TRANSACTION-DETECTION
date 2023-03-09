@@ -275,3 +275,164 @@ def fraudulent_trans(file,transaction_id):
                     return("NO")
     except Exception as e:
         raise e
+    
+def abnormal_trans(data,user_id):
+    """
+    This method returns abnormal transaction.
+    `=================================================================================
+    input_params -> data:dict , user_id:str
+    output -> transaction deatils:dict
+    ===================================================================================
+    """
+    try:
+        transaction = data.get(user_id)
+        tran_amt = tran_lst(data,user_id)
+        abnormal_tran = []
+        for tran in transaction:
+            if abs(float(tran['transaction_amt'])- mean(tran_amt)) > 2*standard_dev(tran_amt):
+                abnormal_tran.append(tran)
+            else:
+                pass
+        if len(abnormal_tran) > 0:
+            return abnormal_tran
+        else:
+            return "No abnormal transaction"
+    except Exception as e:
+        raise e
+    
+def zscore(data,user_id):
+    """
+    This method returns Z score of transaction for single user.
+    `=================================================================================
+    input_params -> data:dict , user_id:str
+    output -> Z-Score:dict
+    ===================================================================================
+
+    """
+    try:
+        transaction = data.get(user_id)
+        tran_amt = tran_lst(data,user_id)
+        d ={}
+        for tran in transaction:
+            z_score = round((float(tran['transaction_amt'])- mean(tran_amt)) / standard_dev(tran_amt),2)
+            d.update({tran['transaction_id']:z_score})
+        return d
+    except Exception as e:
+        raise e
+
+def zscore_all(data):
+    """
+    This method returns Z score of transactions for all users.
+    `=================================================================================
+    input_params -> data:dict 
+    output ->  Z-Score:dict
+    ===================================================================================
+    """
+    try:
+        user_id_lst = [key for key in data.keys()]
+        tran_amt_all = tran_lst_all(data)
+        d ={}
+        for user in user_id_lst:
+            for tran in data.get(user):
+                    z_score = round((float(tran['transaction_amt'])- mean(tran_amt_all)) / standard_dev(tran_amt_all),2)
+                    d.update({tran['transaction_id']:z_score})
+        return d
+    except Exception as e:
+        raise e
+    
+def freq_tran_loc(data,x_cord,y_cord):
+    """
+    This method frequency of transaction at any location.
+    `=================================================================================
+    input_params -> data:dict, location:x_cord,y_cord:str
+    output ->  frequency of transaction:float
+    ===================================================================================
+
+    """
+    try:
+        user_id_lst = [key for key in data.keys()]
+        dict_cord ={}
+        for i in user_id_lst:
+            for user in data.get(i):
+                    x, y = user['x_cord_trans'], user['y_cord_trans']
+                    key = (x, y)
+                    if key not in dict_cord:
+                        dict_cord[key] = 1
+                    else:
+                        dict_cord[key] += 1
+        x_y_cord = (x_cord,y_cord)
+        if x_y_cord in dict_cord:
+            freq_tran = dict_cord.get(x_y_cord)
+            return freq_tran
+        else:
+            return "No transaction repeated"
+    except Exception as e:
+        raise e
+
+def outlier_det(data,user_id,x_cord,y_cord):
+    """
+    This method returns outliers at any location for any user.
+    `=================================================================================
+    input_params -> data:dict, location:x_cord,y_cord:str
+    output ->  outlier transaction:float
+    ===================================================================================
+    """
+    try:
+        tran_amt = tran_lst(data,user_id)
+        q1,q3,iqr_val= iqr(tran_amt)
+        lower_limit =q1-(1.5*iqr_val) 
+        upper_limit =q3+(1.5*iqr_val)
+        outlier = []
+        for i in tran_amt:
+            if i>upper_limit or i < lower_limit:
+                outlier.append(i)
+        x_cord_trans = float(x_cord)
+        y_cord_trans = float(y_cord)
+        transactions = data.get(user_id)
+        for trans in transactions:
+            if float(trans['x_cord_trans']) == x_cord_trans and float(trans['y_cord_trans']) == y_cord_trans:
+                if float(trans['transaction_amt']) in outlier:
+                    return (f"transaction_amt {(float(trans['transaction_amt']))} is outlier")
+                else:
+                    return (f" the transaction_amt {(float(trans['transaction_amt']))} is not outlier")
+            else:
+                return "Enter correct co ordinates"
+    
+    except Exception as e:
+        raise e
+    
+def nth_percentile(data,user_id,percentile):
+    """
+    This method returns percentile for any user.
+    `=================================================================================
+    input_params -> data:dict, user_id = str, percentile:str
+    output ->  nth percentile:float
+    ===================================================================================
+    """
+    try:
+        tran_amt = tran_lst(data,user_id)
+        p = float(percentile)
+        ordinal_rank = (p*len(tran_amt))/100
+        idx = int(ordinal_rank-1)
+        nth_percentile = tran_amt[idx]
+        return nth_percentile
+    except Exception as e:
+        raise e
+    
+def nth_percentile_all(data,percentile):
+    """
+    This method returns percentile for all user.
+    `=================================================================================
+    input_params -> data:dict,percentile:str
+    output ->  nth percentile:float
+    ===================================================================================
+    """
+    try:
+        tran_amt_all = tran_lst_all(data)
+        p = float(percentile)
+        ordinal_rank = (p*len(tran_amt_all))/100
+        idx = int(ordinal_rank-1)
+        nth_percentile = tran_amt_all[idx]
+        return nth_percentile
+    except Exception as e:
+        raise e
